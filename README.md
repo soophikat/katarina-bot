@@ -13,7 +13,7 @@
 
 
 ## Install
-**setup .env first!**
+**Configure the environment variables first.** For local development, create a `.env` file based on `.env-example`.
 
 ```bash
 node i
@@ -50,9 +50,27 @@ stops the deamon.
 
 `RIOT_TOKEN`- refers to the token given by riot to use riot api.
 
-`DATABASE_URL` - path to the database, since its sqlite, its just a path to a file. eg.
+`DATABASE_URL` - PostgreSQL connection string, for example:
 
-`DATABASE_URL="file:/home/kat/katarina-bot-db/server.db"`
+`DATABASE_URL="postgresql://user:password@hostname:5432/database?schema=public"`
+
+### Docker
+
+The image executes `prisma migrate deploy`, deploys the Discord commands, and then runs the bot in the foreground. This happens each time the container starts. The database is not included in the image; it must already be running and reachable through `DATABASE_URL`.
+
+Build the image:
+
+```bash
+docker build -t katarina-bot .
+```
+
+Run it using the variables in your local `.env` file:
+
+```bash
+docker run -d --name katarina-bot --restart unless-stopped --env-file .env katarina-bot
+```
+
+Set `DATABASE_URL` to an address reachable from the container. For a database running on the same host, `localhost` inside the URL refers to the bot container, not the host.
 
 ## Features
 ### Discord management features
